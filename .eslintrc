@@ -1,0 +1,18 @@
+{
+  "extends": ["standard", "plugin:react/recommended"],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "plugins": [
+    "react"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "react/jsx-key": 0
+  }
+}
