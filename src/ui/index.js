@@ -5,6 +5,30 @@ const { renderToString } = require('react-dom/server')
 const request = require('request-promise-native')
 import App from './widget'
 const config = require('config')
+const AWS = require('aws-sdk')
+
+const awsCredentialsFilePath = config.get('aws.credentialsFilePath')
+const awsS3Bucket = config.get('aws.s3Bucket')
+
+if (awsCredentialsFilePath) {
+  AWS.config.loadFromPath(awsCredentialsFilePath)
+}
+
+const s3 = new AWS.S3()
+
+// TODO fix
+s3.getObject({Bucket: awsS3Bucket, Key: 'travis-0bdd57bcec058da2aadceb66aa641525975fafa2-1517956392.zip'}).createReadStream().on('data', d => console.log(d))
+s3.putObject({
+  Body: 'alöksdfjaölsdfjk',
+  Bucket: awsS3Bucket,
+  Key: 'exampleobject'
+}, (err, data) => {
+  if (err) {
+    return console.error(err)
+  }
+
+  console.log(data)
+})
 
 module.exports = {
   serveWidget: (req, res) => {
