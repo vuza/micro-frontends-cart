@@ -45,7 +45,7 @@ const _getUserData = token => {
   return requestUserData()
     .then(data => data ? JSON.parse(data) : {})
     .catch(() => {
-      console.error('Error catching user data')
+      console.error(`Error catching user data via ${config.get('userServiceConnectionString')}/api/user/${token}`)
       return {}
     })
 }
