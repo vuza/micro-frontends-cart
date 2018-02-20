@@ -4,6 +4,7 @@ const { renderToString } = require('react-dom/server')
 // const cheerio = require('cheerio')
 const request = require('request-promise-native')
 import App from './widget'
+const config = require('config')
 
 module.exports = {
   serveWidget: (req, res) => {
@@ -38,7 +39,7 @@ const _getUserData = token => {
   let requestUserData = () => Promise.resolve()
 
   if (token) {
-    requestUserData = () => request(`http://localhost:8070/api/user/${token}`)
+    requestUserData = () => request(`${config.get('userServiceConnectionString')}/api/user/${token}`)
   }
 
   return requestUserData()
