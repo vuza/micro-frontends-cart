@@ -10,8 +10,6 @@ module.exports = {
   serveWidget: (req, res) => {
     _getUserData(req.cookies.token)
       .then(data => {
-        console.log(JSON.stringify(data))
-
         const html = renderToString(
           <App {...data} />
         )
@@ -45,7 +43,7 @@ const _getUserData = token => {
   return requestUserData()
     .then(data => data ? JSON.parse(data) : {})
     .catch(() => {
-      console.error(`Error catching user data via ${config.get('userServiceConnectionString')}/user/api/user/${token}`)
+      console.error('Error catching user data')
       return {}
     })
 }
