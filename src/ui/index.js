@@ -39,13 +39,13 @@ const _getUserData = token => {
   let requestUserData = () => Promise.resolve()
 
   if (token) {
-    requestUserData = () => request(`${config.get('userServiceConnectionString')}/api/user/${token}`)
+    requestUserData = () => request(`${config.get('userServiceConnectionString')}/user/api/user/${token}`)
   }
 
   return requestUserData()
     .then(data => data ? JSON.parse(data) : {})
     .catch(() => {
-      console.error(`Error catching user data via ${config.get('userServiceConnectionString')}/api/user/${token}`)
+      console.error(`Error catching user data via ${config.get('userServiceConnectionString')}/user/api/user/${token}`)
       return {}
     })
 }
