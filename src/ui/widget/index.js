@@ -8,7 +8,7 @@ const App = props => {
         <p>Du hast {props.articleCount || 0} Artikel im <a href="/cart">Warenkorb</a></p>
         <style jsx>{`
               p {
-                  color: green;
+                  color: yellow;
               }
           `}</style>
       </div>
@@ -17,10 +17,10 @@ const App = props => {
 
   return [
     <div>
-      <p>Hi, magst du dich nicht <a href="/user">anmelden</a>? ¯\_(ツ)_/¯</p>
+      <p><a href="/user">Anmelden</a> ¯\_(ツ)_/¯</p>
       <style jsx>{`
-            p {
-                color: green;
+            p a {
+              text-transform: uppercase;
             }
         `}</style>
     </div>

@@ -1,7 +1,7 @@
 const React = require('react')
 const { renderToString } = require('react-dom/server')
-// const { flushToHTML } = require('styled-jsx/server')
-// const cheerio = require('cheerio')
+const { flushToHTML } = require('styled-jsx/server')
+const cheerio = require('cheerio')
 const request = require('request-promise-native')
 import App from './widget'
 const config = require('config')
@@ -16,18 +16,34 @@ if (awsCredentialsFilePath) {
 
 const s3 = new AWS.S3()
 
-// TODO fix
-s3.getObject({Bucket: awsS3Bucket, Key: 'travis-0bdd57bcec058da2aadceb66aa641525975fafa2-1517956392.zip'}).createReadStream().on('data', d => console.log(d))
-s3.putObject({
-  Body: 'alöksdfjaölsdfjk',
-  Bucket: awsS3Bucket,
-  Key: 'exampleobject'
-}, (err, data) => {
-  if (err) {
-    return console.error(err)
-  }
+const doesCssExist = name => new Promise((resolve, reject) => {
+  s3.headObject({Bucket: awsS3Bucket, Key: `${name}.css`}, (err, data) => {
+    if (err) {
+      if (err.code === 'NotFound') {
+        return resolve(false)
+      }
 
-  console.log(data)
+      return reject(err)
+    }
+
+    resolve(true)
+  })
+})
+
+const persistCss = (name, content) => new Promise((resolve, reject) => {
+  s3.putObject({
+    Body: content,
+    Bucket: awsS3Bucket,
+    Key: `${name}.css`,
+    ContentType: 'text/css',
+    ACL: 'public-read'
+  }, (err, data) => {
+    if (err) {
+      return reject(err)
+    }
+
+    resolve()
+  })
 })
 
 module.exports = {
@@ -38,21 +54,25 @@ module.exports = {
           <App {...data} />
         )
 
-        // const styles = flushToHTML()
-        // const $ = cheerio.load(styles)
+        const styles = flushToHTML()
+        const $ = cheerio.load(styles)
+        const cssHash = $('style').attr('id')
 
-        // TODO write it to db
-        // Provide it via specific route
+        doesCssExist(cssHash)
+          .then(exists => {
+            if (!exists) {
+              return persistCss(cssHash, $('style').html())
+            }
+          })
+          .then(() => {
+            const css = `<http://${awsS3Bucket}.s3-website-us-east-1.amazonaws.com/${cssHash}.css>; rel="stylesheet"`
 
-        // Every Fragment sends a link header that describes its resources - css and js
-        // const css = `<http://localhost:${port}/styles${$('style').attr('id')}.css>; rel="stylesheet"`
-
-        res.set({
-          // Link: `${css}`,
-          'Content-Type': 'text/html'
-        })
-
-        res.end(html)
+            res.set({
+              Link: `${css}`,
+              'Content-Type': 'text/html'
+            })
+          })
+          .then(() => res.end(html))
       })
   }
 }

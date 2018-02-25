@@ -3,6 +3,6 @@ module.exports = {
   userServiceConnectionString: 'http://skipper.us-east-1.elasticbeanstalk.com',
   aws: {
     credentialsFilePath: null,
-    s3Bucket: 'microfrontends'
+    s3Bucket: 'micro-frontends-css'
   }
 }
