@@ -8,7 +8,7 @@ const App = props => {
         <p>Du hast {props.articleCount || 0} Artikel im <a href="/cart">Warenkorb</a></p>
         <style jsx>{`
               p {
-                  color: yellow;
+                  text-align: right;
               }
           `}</style>
       </div>
