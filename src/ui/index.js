@@ -6,6 +6,7 @@ const request = require('request-promise-native')
 import App from './widget'
 const config = require('config')
 const AWS = require('aws-sdk')
+const {getProducts} = require('../api')
 
 const awsCredentialsFilePath = config.get('aws.credentialsFilePath')
 const awsS3Bucket = config.get('aws.s3Bucket')
@@ -49,6 +50,7 @@ const persistCss = (name, content) => new Promise((resolve, reject) => {
 module.exports = {
   serveWidget: (req, res) => {
     _getUserData(req.cookies.token)
+      .then(data => Object.assign(data, _getCartData(data.name)))
       .then(data => {
         const html = renderToString(
           <App {...data} />
@@ -87,7 +89,15 @@ const _getUserData = token => {
   return requestUserData()
     .then(data => data ? JSON.parse(data) : {})
     .catch(() => {
-      console.error('Error catching user data')
+      console.error(`Error catching user data on ${config.get('userServiceConnectionString')}/user/api/user/${token}`)
       return {}
     })
+}
+
+const _getCartData = username => {
+  if (!username) {
+    return {}
+  }
+
+  return {products: getProducts(username)}
 }

@@ -5,7 +5,7 @@ const App = props => {
     return [
       <div>
         <p>Hi <a href="/user">{props.name}</a> (^_^)</p>
-        <p>Du hast {props.articleCount || 0} Artikel im <a href="/cart">Warenkorb</a></p>
+        <p>Du hast {props.products ? props.products.length : 0} Artikel im <a href="/cart">Warenkorb</a></p>
         <style jsx>{`
               p {
                   text-align: right;
